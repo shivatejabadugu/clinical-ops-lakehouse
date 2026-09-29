@@ -1,0 +1,25 @@
+resources:
+  pipelines:
+    clinical_ops:
+      name: clinical-ops-${bundle.target}
+      catalog: ${var.catalog}
+      schema: ${resources.schemas.clinical.name}
+      serverless: true
+      photon: true
+      channel: CURRENT
+      continuous: false
+      configuration:
+        landing_path: /Volumes/${var.catalog}/clinical/landing/fhir/
+      libraries:
+        - file: {path: ../pipelines/00_reference.sql}
+        - file: {path: ../pipelines/01_bronze.sql}
+        - file: {path: ../pipelines/02_silver_observations.sql}
+        - file: {path: ../pipelines/03_silver_encounters.sql}
+        - file: {path: ../pipelines/04_silver_patients.sql}
+        - file: {path: ../pipelines/05_silver_medications_conditions.sql}
+        - file: {path: ../pipelines/10_gold_visits.sql}
+        - file: {path: ../pipelines/11_gold_ed.sql}
+        - file: {path: ../pipelines/12_gold_census.sql}
+        - file: {path: ../pipelines/13_gold_sepsis.sql}
+        - file: {path: ../pipelines/14_gold_aki.sql}
+        - file: {path: ../pipelines/19_gold_data_quality.sql}

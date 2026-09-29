@@ -1,0 +1,28 @@
+# Databricks Asset Bundle: deploys the pipeline, the landing volume, the secure
+# schema, and the orchestration job.
+#   databricks bundle validate
+#   databricks bundle deploy -t dev
+#   databricks bundle run clinical_ops_refresh -t dev
+bundle:
+  name: clinical-ops-lakehouse
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog to deploy into
+    default: clinical_dev
+  warehouse_id:
+    description: SQL warehouse that runs governance SQL (find it under SQL Warehouses > Connection details)
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      catalog: clinical_dev
+  prod:
+    mode: production
+    variables:
+      catalog: clinical_prod

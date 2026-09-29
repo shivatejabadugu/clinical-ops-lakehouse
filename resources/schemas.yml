@@ -1,0 +1,18 @@
+resources:
+  schemas:
+    clinical:
+      catalog_name: ${var.catalog}
+      name: clinical
+      comment: Clinical operations lakehouse (bronze/silver/gold). Contains PHI.
+    clinical_secure:
+      catalog_name: ${var.catalog}
+      name: clinical_secure
+      comment: Governed views for analysts. MRNs masked, rows filtered by facility.
+
+  volumes:
+    landing:
+      catalog_name: ${var.catalog}
+      schema_name: ${resources.schemas.clinical.name}
+      name: landing
+      volume_type: MANAGED
+      comment: FHIR bulk-export NDJSON drops (export_YYYY-MM-DD folders)

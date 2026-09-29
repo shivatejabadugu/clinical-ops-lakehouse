@@ -1,0 +1,30 @@
+resources:
+  jobs:
+    clinical_ops_refresh:
+      name: clinical-ops-refresh-${bundle.target}
+      # a new export batch landing in the volume triggers a run
+      trigger:
+        file_arrival:
+          url: /Volumes/${var.catalog}/clinical/landing/fhir/
+        pause_status: PAUSED
+      max_concurrent_runs: 1
+      tasks:
+        - task_key: refresh_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.clinical_ops.id}
+        - task_key: apply_governance
+          depends_on: [{task_key: refresh_pipeline}]
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../governance/secure_views.sql
+            parameters:
+              catalog: ${var.catalog}
+        - task_key: data_quality_gate
+          depends_on: [{task_key: refresh_pipeline}]
+          sql_task:
+            warehouse_id: ${var.warehouse_id}
+            file:
+              path: ../monitoring/quality_gate.sql
+            parameters:
+              catalog: ${var.catalog}
